@@ -11,6 +11,33 @@
 	<div class="container">
 		<section class="section">
 			<h1 class="title">タブ</h1>
+
+			<div id="tabApp01">
+				<div role="tablist">
+					<button
+						type="button"
+						role="tab"
+						id="tab1"
+						aria-controls="tabpanel1">タブ1</button>
+					<button
+						type="button"
+						role="tab"
+						id="tab2"
+						aria-controls="tabpanel2">タブ2</button>
+				</div>
+				<div
+					role="tabpanel"
+					id="tabpanel1"
+					aria-labelledby="tab1">
+					タブパネル1
+				</div>
+				<div
+					role="tabpanel"
+					id="tabpanel2"
+					aria-labelledby="tab2">
+					タブパネル2
+				</div>
+			</div>
 		</section>
 		<div class="has-text-centered">
 			<a class="button" href="/">トップページへ</a>
