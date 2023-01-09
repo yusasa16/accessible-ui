@@ -3,7 +3,6 @@ export class TabParts {
 	tabs: NodeListOf<HTMLElement>;
 	panels: NodeListOf<HTMLElement>;
 	activeTabIndex: number;
-	activeTab: HTMLElement;
 
 	constructor(parentNode: HTMLElement) {
 		this.parentNode = parentNode;
@@ -11,47 +10,42 @@ export class TabParts {
 		this.panels = this.parentNode.querySelectorAll('[role="tabpanel"]');
 
 		this.activeTabIndex = 0;
-		this.activeTab = this.tabs[this.activeTabIndex];
 
 		this.setAttrLoop();
 
 		for(let i = 0; i < this.tabs.length; i++) {
 			const tab = this.tabs[i];
+			//全てのタブ要素をナンバリング（data-index属性にインデックス番号振り）
 			tab.setAttribute('data-index', i.toString());
 
+			// タブがクリックされた時の動作
 			tab.addEventListener('click', (e) => {
-				this.activeTab = e.target as HTMLElement;
-				const dataIndex = this.activeTab.getAttribute('data-index') as string;
+				const target = e.target as HTMLElement;
+				const dataIndex = target.getAttribute('data-index') as string;
 				this.activeTabIndex = parseInt(dataIndex);
 
 				this.setAttrLoop();
 			});
 
+			// タブ上で矢印キー等が押された時の動作
 			tab.addEventListener('keydown', (e) => {
 				switch(e.key) {
 					case 'ArrowLeft':
 						if(!(this.activeTabIndex <= 0)) {
 							this.activeTabIndex--;
-							this.activeTab = this.tabs[this.activeTabIndex];
-
-							this.setAttrLoop();
-
-							this.activeTab.focus();
 						}
 						break;
 					case 'ArrowRight':
 						if(!(this.activeTabIndex >= this.tabs.length - 1)) {
 							this.activeTabIndex++;
-							this.activeTab = this.tabs[this.activeTabIndex];
-
-							this.setAttrLoop();
-
-							this.activeTab.focus();
 						}
 						break;
 					default:
 						break;
 				}
+
+				this.setAttrLoop();
+				this.tabs[this.activeTabIndex].focus();
 			})
 		}
 	}
@@ -95,10 +89,10 @@ export class TabParts {
 	 */
 	setAttrLoop(): void {
 		for(let i = 0; i < this.tabs.length; i++) {
-			this.setTabAttr(this.tabs[i], this.activeTab);
+			this.setTabAttr(this.tabs[i], this.tabs[this.activeTabIndex]);
 		}
 		for(let i = 0; i < this.panels.length; i++) {
-			this.setPanelAttr(this.panels[i], this.activeTab);
+			this.setPanelAttr(this.panels[i], this.tabs[this.activeTabIndex]);
 		}
 	}
 }
