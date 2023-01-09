@@ -1,0 +1,30 @@
+{
+  "name": "tmpl-vite",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "d": "yarn dev",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@macropygia/vite-plugin-glob-input": "^0.0.15",
+    "@macropygia/vite-plugin-pug-static": "^0.0.17",
+    "@types/node": "^18.8.3",
+    "@types/pug": "^2.0.6",
+    "@vitejs/plugin-vue": "^3.1.2",
+    "pug": "^3.0.2",
+    "sass": "^1.55.0",
+    "typescript": "^4.6.4",
+    "vite": "^3.1.0",
+    "vue-tsc": "^0.40.13"
+  },
+  "dependencies": {
+    "bulma": "^0.9.4",
+    "normalize.css": "^8.0.1",
+    "vue": "^3.2.40",
+    "vuex": "^4.0.2"
+  }
+}
