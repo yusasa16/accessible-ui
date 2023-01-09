@@ -1,59 +1,66 @@
 export class TabParts {
-	parentNode: Element;
-	tabs: NodeListOf<Element>;
-	panels: NodeListOf<Element>;
+	parentNode: HTMLElement;
+	tabs: NodeListOf<HTMLElement>;
+	panels: NodeListOf<HTMLElement>;
+	activeTab: HTMLElement;
 	selectedTab: string;
 
-	constructor(parentNode: Element) {
+	constructor(parentNode: HTMLElement) {
 		this.parentNode = parentNode;
 		this.tabs = this.parentNode.querySelectorAll('[role="tab"]');
 		this.panels = this.parentNode.querySelectorAll('[role="tabpanel"]');
 
+		this.activeTab = this.tabs[0]
 		// @ts-ignore
 		this.selectedTab = this.tabs[0].attributes['aria-controls'].value;
 
 		for(let i = 0; i < this.panels.length; i++) {
-			const panel = this.panels[i] as HTMLElement;
+			const panel = this.panels[i];
 
-			this.initPanelAttr(panel);
+			this.setPanelAttr(panel, this.activeTab);
 		}
 
 		for(let i = 0; i < this.tabs.length; i++) {
-			const tab = this.tabs[i] as HTMLElement;
+			const tab = this.tabs[i];
 
-			this.initTabAttr(tab);
+			this.setTabAttr(tab, this.activeTab);
 			this.clickFunc(tab);
 		}
 	}
 
-	initTabAttr(tab: HTMLElement, selTab?: HTMLElement) {
-		tab.tabIndex = -1;
-		tab.ariaSelected = 'false';
+	/**
+	 * タブの[tabindex][stis-selected]属性の値をセットする。
+	 * @param tab [role='tab']にあたるhtml要素
+	 * @param activeTab 現在選択されているタブのhtml要素
+	 */
+	setTabAttr(tab: HTMLElement, activeTab: HTMLElement): void {
+		const isActive = (): boolean => tab === activeTab;
 
-		let targetPanelId;
-
-		if(selTab) {
-			selTab.tabIndex = 0;
-			selTab.ariaSelected = 'true';
-
-			// @ts-ignore
-			targetPanelId = selTab.attributes['aria-controls'].value;
+		if(isActive()) {
+			tab.tabIndex = 0;
+			tab.ariaSelected = 'true';
 		} else {
-			const firstTab = this.tabs[0] as HTMLElement;
-			firstTab.tabIndex = 0;
-			firstTab.ariaSelected = 'true';
-
-			// @ts-ignore
-			targetPanelId = this.tabs[0].attributes['aria-controls'].value;
+			tab.tabIndex = -1;
+			tab.ariaSelected = 'false';
 		}
-
-		const targetPanel = this.getTargetPanel(targetPanelId);
-		targetPanel.ariaHidden = 'false';
 	}
 
-	initPanelAttr(panel: HTMLElement) {
+	/**
+	 * パネルの[tabindex][stis-hidden]属性の値をセットする。
+	 * @param panel [role='tabpanel']にあたるhtml要素
+	 * @param activeTab 現在選択されているタブのhtml要素
+	 */
+	setPanelAttr(panel: HTMLElement, activeTab: HTMLElement): void {
+		// @ts-ignore
+		const controls = activeTab.attributes['aria-controls'].value;
+
 		panel.tabIndex = 0;
-		panel.ariaHidden = 'true';
+
+		if(panel.id === controls) {
+			panel.ariaHidden = 'false';
+		} else {
+			panel.ariaHidden = 'true';
+		}
 	}
 
 	/**
@@ -62,7 +69,7 @@ export class TabParts {
 	 */
 	clickFunc(clickedTab: Element): void {
 		clickedTab.addEventListener('click', (e) => {
-			const target = e.target as HTMLElement;
+			const target = e.target;
 			this.resetToHide();
 
 			// @ts-ignore
