@@ -2,6 +2,7 @@ export class TabParts {
 	parentNode: HTMLElement;
 	tabs: NodeListOf<HTMLElement>;
 	panels: NodeListOf<HTMLElement>;
+	activeTabIndex: number;
 	activeTab: HTMLElement;
 
 	constructor(parentNode: HTMLElement) {
@@ -9,20 +10,18 @@ export class TabParts {
 		this.tabs = this.parentNode.querySelectorAll('[role="tab"]');
 		this.panels = this.parentNode.querySelectorAll('[role="tabpanel"]');
 
-		this.activeTab = this.tabs[0];
-
-		for(let i = 0; i < this.panels.length; i++) {
-			const panel = this.panels[i];
-
-			this.setPanelAttr(panel, this.activeTab);
-		}
+		this.activeTabIndex = 0;
+		this.activeTab = this.tabs[this.activeTabIndex];
 
 		for(let i = 0; i < this.tabs.length; i++) {
 			const tab = this.tabs[i];
+			tab.setAttribute('data-index', i.toString());
 			this.setTabAttr(tab, this.activeTab);
 
 			tab.addEventListener('click', (e) => {
 				this.activeTab = e.target as HTMLElement;
+				const dataIndex = this.activeTab.getAttribute('data-index') as string;
+				this.activeTabIndex = parseInt(dataIndex);
 
 				for(let i = 0; i < this.tabs.length; i++) {
 					this.setTabAttr(this.tabs[i], this.activeTab);
@@ -33,9 +32,46 @@ export class TabParts {
 			});
 
 			tab.addEventListener('keydown', (e) => {
-				console.log('keydown');
-				console.log(e.key);
+				switch(e.key) {
+					case 'ArrowLeft':
+						if(!(this.activeTabIndex <= 0)) {
+							this.activeTabIndex--;
+							this.activeTab = this.tabs[this.activeTabIndex];
+
+							for(let i = 0; i < this.tabs.length; i++) {
+								this.setTabAttr(this.tabs[i], this.activeTab);
+							}
+							for(let i = 0; i < this.panels.length; i++) {
+								this.setPanelAttr(this.panels[i], this.activeTab);
+							}
+
+							this.activeTab.focus();
+						}
+						break;
+					case 'ArrowRight':
+						if(!(this.activeTabIndex >= this.tabs.length - 1)) {
+							this.activeTabIndex++;
+							this.activeTab = this.tabs[this.activeTabIndex];
+
+							for(let i = 0; i < this.tabs.length; i++) {
+								this.setTabAttr(this.tabs[i], this.activeTab);
+							}
+							for(let i = 0; i < this.panels.length; i++) {
+								this.setPanelAttr(this.panels[i], this.activeTab);
+							}
+
+							this.activeTab.focus();
+						}
+						break;
+					default:
+						break;
+				}
 			})
+		}
+
+		for(let i = 0; i < this.panels.length; i++) {
+			const panel = this.panels[i];
+			this.setPanelAttr(panel, this.activeTab);
 		}
 	}
 
@@ -63,7 +99,7 @@ export class TabParts {
 	 */
 	setPanelAttr(panel: HTMLElement, activeTab: HTMLElement): void {
 		// @ts-ignore
-		const controls = activeTab.attributes['aria-controls'].value;
+		const controls = activeTab.getAttribute('aria-controls');
 
 		panel.tabIndex = 0;
 
