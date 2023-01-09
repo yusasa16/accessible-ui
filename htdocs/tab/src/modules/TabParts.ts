@@ -3,16 +3,13 @@ export class TabParts {
 	tabs: NodeListOf<HTMLElement>;
 	panels: NodeListOf<HTMLElement>;
 	activeTab: HTMLElement;
-	selectedTab: string;
 
 	constructor(parentNode: HTMLElement) {
 		this.parentNode = parentNode;
 		this.tabs = this.parentNode.querySelectorAll('[role="tab"]');
 		this.panels = this.parentNode.querySelectorAll('[role="tabpanel"]');
 
-		this.activeTab = this.tabs[0]
-		// @ts-ignore
-		this.selectedTab = this.tabs[0].attributes['aria-controls'].value;
+		this.activeTab = this.tabs[0];
 
 		for(let i = 0; i < this.panels.length; i++) {
 			const panel = this.panels[i];
@@ -22,9 +19,23 @@ export class TabParts {
 
 		for(let i = 0; i < this.tabs.length; i++) {
 			const tab = this.tabs[i];
-
 			this.setTabAttr(tab, this.activeTab);
-			this.clickFunc(tab);
+
+			tab.addEventListener('click', (e) => {
+				this.activeTab = e.target as HTMLElement;
+
+				for(let i = 0; i < this.tabs.length; i++) {
+					this.setTabAttr(this.tabs[i], this.activeTab);
+				}
+				for(let i = 0; i < this.panels.length; i++) {
+					this.setPanelAttr(this.panels[i], this.activeTab);
+				}
+			});
+
+			tab.addEventListener('keydown', (e) => {
+				console.log('keydown');
+				console.log(e.key);
+			})
 		}
 	}
 
@@ -62,47 +73,4 @@ export class TabParts {
 			panel.ariaHidden = 'true';
 		}
 	}
-
-	/**
-	 * タブをクリックした時の関数
-	 * @param clickedTab Element クリックされたタブ要素
-	 */
-	clickFunc(clickedTab: Element): void {
-		clickedTab.addEventListener('click', (e) => {
-			const target = e.target;
-			this.resetToHide();
-
-			// @ts-ignore
-			this.selectedTab = target.attributes['aria-controls'].value;
-			target.ariaSelected = 'true';
-
-			const targetPanel = this.getTargetPanel(this.selectedTab);
-			targetPanel.ariaHidden = 'false';
-		});
-	};
-
-	/**
-	 * 全てのタブ・パネルのaria属性初期化
-	 * （一旦全て選択されていない状態にする）
-	 */
-	resetToHide() {
-		for(let i = 0; i < this.tabs.length; i++) {
-			this.tabs[i].ariaSelected = 'false';
-		}
-		for(let i = 0; i < this.panels.length; i++) {
-			this.panels[i].ariaHidden = 'true';
-		}
-	}
-
-	/**
-	 * タブをクリックした際、コントロール先のパネルを取得する関数
-	 * @param ariaControls クリックされたタブのaria-controls属性値
-	 * @returns パネルの要素（: Element）
-	 */
-	getTargetPanel (ariaControls: string): Element {
-		const panel = Array.from(this.panels).filter((el) => {
-			return el.id === ariaControls;
-		})
-		return panel[0];
-	};
 }
