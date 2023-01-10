@@ -21,8 +21,10 @@ export class TabParts {
 			// タブがクリックされた時の動作
 			tab.addEventListener('click', (e) => {
 				const target = e.target as HTMLElement;
-				const dataIndex = target.getAttribute('data-index') as string;
-				this.activeTabIndex = parseInt(dataIndex);
+				const dataIndex = target.getAttribute('data-index');
+				if(dataIndex) {
+					this.activeTabIndex = parseInt(dataIndex);
+				}
 
 				this.setAttrLoop();
 			});
