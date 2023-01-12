@@ -1,73 +1,77 @@
 <script setup lang="ts">
+const tabItems = [
+	{
+		isSelected: true,
+		tab: {
+			id: 'tab1',
+			text: 'タブ1'
+		},
+		panel: {
+			id: 'tabpanel1',
+			text: 'タブパネル1'
+		}
+	},
+	{
+		isSelected: false,
+		tab: {
+			id: 'tab2',
+			text: 'タブ2'
+		},
+		panel: {
+			id: 'tabpanel2',
+			text: 'タブパネル2'
+		}
+	},
+	{
+		isSelected: false,
+		tab: {
+			id: 'tab3',
+			text: 'タブ3'
+		},
+		panel: {
+			id: 'tabpanel3',
+			text: 'タブパネル3'
+		}
+	},
+	{
+		isSelected: false,
+		tab: {
+			id: 'tab4',
+			text: 'タブ4'
+		},
+		panel: {
+			id: 'tabpanel4',
+			text: 'タブパネル4'
+		}
+	},
+];
+
+function getTabIndex(isSelected: boolean): string {
+	return (isSelected ? '0' : '-1')
+};
 </script>
 
 <template>
 	<div id="tabApp01">
 		<div role="tablist">
 			<button
+				v-for="item in tabItems"
 				type="button"
 				role="tab"
-				id="tab1"
-				aria-controls="tabpanel1"
-				tabindex="0"
-				aria-selected="true">
-				タブ1
-			</button>
-			<button
-				type="button"
-				role="tab"
-				id="tab2"
-				aria-controls="tabpanel2"
-				tabindex="-1"
-				aria-selected="false">
-				タブ2
-			</button>
-			<button
-				type="button"
-				role="tab"
-				id="tab3"
-				aria-controls="tabpanel3"
-				tabindex="-1"
-				aria-selected="false">
-				タブ3
-			</button>
-			<button
-				type="button"
-				role="tab"
-				id="tab4"
-				aria-controls="tabpanel4"
-				tabindex="-1"
-				aria-selected="false">
-				タブ4
+				:id="item.tab.id"
+				:aria-controls="item.panel.id"
+				:tabindex="getTabIndex(item.isSelected)"
+				:aria-selected="item.isSelected">
+				{{ item.tab.text }}
 			</button>
 		</div>
 		<div
+			v-for="item in tabItems"
 			role="tabpanel"
-			id="tabpanel1"
-			aria-labelledby="tab1"
-			aria-hidden="false">
-			タブパネル1
-		</div>
-		<div
-			role="tabpanel"
-			id="tabpanel2"
-			aria-labelledby="tab2"
-			aria-hidden="true">
-			タブパネル2
-		</div>
-		<div
-			role="tabpanel"
-			id="tabpanel3"
-			aria-labelledby="tab3"
-			aria-hidden="true">
-			タブパネル3
-		</div>
-		<div
-			role="tabpanel"
-			id="tabpanel4"
-			aria-labelledby="tab4"
-			aria-hidden="true">
-			タブパネル4
+			:id="item.panel.id"
+			:aria-labelledby="item.tab.id"
+			:aria-hidden="!item.isSelected">
+			{{ item.panel.text }}
 		</div>
 	</div>
 </template>
