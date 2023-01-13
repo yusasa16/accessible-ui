@@ -1,5 +1,19 @@
 <script setup lang="ts">
-const tabItems = [
+import { ref, Ref } from 'vue';
+
+interface tabInterface {
+	isSelected: boolean,
+	tab: {
+		id: string,
+		text: string
+	},
+	panel: {
+		id: string,
+		text: string,
+	}
+}
+
+const tabItems: Ref<tabInterface[]> = ref([
 	{
 		isSelected: true,
 		tab: {
@@ -44,11 +58,36 @@ const tabItems = [
 			text: 'タブパネル4'
 		}
 	},
-];
+]);
 
 function getTabIndex(isSelected: boolean): string {
 	return (isSelected ? '0' : '-1')
 };
+
+function clickFunc(event: Event): void {
+	const items = tabItems.value;
+	const target = event.target as HTMLElement | null;
+
+	if(!target) return;
+
+	for(const item of items) {
+		if(item.tab.id === target.id) {
+			item.isSelected = true;
+		} else {
+			item.isSelected = false;
+		}
+	}
+}
+
+function keyLeftFunc(event: Event): void {
+	console.log('左');
+	console.log(event);
+}
+
+function keyRightFunc(event: Event) {
+	console.log('右');
+	console.log(event);
+}
 </script>
 
 <template>
@@ -61,7 +100,10 @@ function getTabIndex(isSelected: boolean): string {
 				:id="item.tab.id"
 				:aria-controls="item.panel.id"
 				:tabindex="getTabIndex(item.isSelected)"
-				:aria-selected="item.isSelected">
+				:aria-selected="item.isSelected"
+				@click="clickFunc"
+				@keydown.arrow-left="keyLeftFunc"
+				@keydown.arrow-right="keyRightFunc">
 				{{ item.tab.text }}
 			</button>
 		</div>
@@ -70,7 +112,8 @@ function getTabIndex(isSelected: boolean): string {
 			role="tabpanel"
 			:id="item.panel.id"
 			:aria-labelledby="item.tab.id"
-			:aria-hidden="!item.isSelected">
+			:aria-hidden="!item.isSelected"
+			tabindex="0">
 			{{ item.panel.text }}
 		</div>
 	</div>
