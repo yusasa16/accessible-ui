@@ -64,7 +64,7 @@ function getTabIndex(isSelected: boolean): string {
 	return (isSelected ? '0' : '-1')
 };
 
-function clickFunc(event: Event): void {
+function clickFunc(event: MouseEvent): void {
 	const items = tabItems.value;
 	const target = event.target as HTMLElement | null;
 
@@ -79,14 +79,40 @@ function clickFunc(event: Event): void {
 	}
 }
 
-function keyLeftFunc(event: Event): void {
-	console.log('左');
-	console.log(event);
+function keyLeftFunc(event: KeyboardEvent): void {
+	const index = getActiveTab();
+	const target = event.target as HTMLElement | null;
+	const items = tabItems.value;
+
+	if((index === 0)) return;
+
+	if(!target) return;
+
+	for(const item of items) {
+		item.isSelected = false;
+	}
+
+	items[index - 1].isSelected = true;
 }
 
-function keyRightFunc(event: Event) {
-	console.log('右');
-	console.log(event);
+function keyRightFunc(event: KeyboardEvent): void {
+	const index = getActiveTab();
+	const target = event.target as HTMLElement | null;
+	const items = tabItems.value;
+
+	if((index === items.length - 1)) return;
+
+	if(!target) return;
+
+	for(const item of items) {
+		item.isSelected = false;
+	}
+
+	items[index + 1].isSelected = true;
+}
+
+function getActiveTab(): number {
+	return tabItems.value.findIndex((el) => el.isSelected === true);
 }
 </script>
 
