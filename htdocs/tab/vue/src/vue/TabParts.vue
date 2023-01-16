@@ -64,22 +64,22 @@ function getTabIndex(isSelected: boolean): string {
 	return (isSelected ? '0' : '-1')
 };
 
-function clickFunc(event: MouseEvent): void {
+function clickFunc(event: MouseEvent) {
 	const items = tabItems.value;
 	const target = event.target as HTMLElement | null;
 
 	if(!target) return;
 
 	for(const item of items) {
+		item.isSelected = false;
+
 		if(item.tab.id === target.id) {
 			item.isSelected = true;
-		} else {
-			item.isSelected = false;
 		}
 	}
 }
 
-function keyLeftFunc(event: KeyboardEvent): void {
+function keyLeftFunc(event: KeyboardEvent) {
 	const index = getActiveTab();
 	const target = event.target as HTMLElement | null;
 	const items = tabItems.value;
@@ -93,9 +93,11 @@ function keyLeftFunc(event: KeyboardEvent): void {
 	}
 
 	items[index - 1].isSelected = true;
+
+	console.log(makeFocus(index - 1));
 }
 
-function keyRightFunc(event: KeyboardEvent): void {
+function keyRightFunc(event: KeyboardEvent) {
 	const index = getActiveTab();
 	const target = event.target as HTMLElement | null;
 	const items = tabItems.value;
@@ -109,10 +111,21 @@ function keyRightFunc(event: KeyboardEvent): void {
 	}
 
 	items[index + 1].isSelected = true;
+
+	console.log(makeFocus(index + 1));
 }
 
-function getActiveTab(): number {
+function getActiveTab() {
 	return tabItems.value.findIndex((el) => el.isSelected === true);
+}
+
+function makeFocus(index: number) {
+	const target = document.getElementById(tabItems.value[index].tab.id);
+
+	if(!target) return
+
+	target.focus();
+	return target;
 }
 </script>
 
