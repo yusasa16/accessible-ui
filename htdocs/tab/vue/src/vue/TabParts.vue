@@ -79,40 +79,30 @@ function clickFunc(event: MouseEvent) {
 	}
 }
 
-function keyLeftFunc(event: KeyboardEvent) {
+function keydownFunc(event: KeyboardEvent) {
 	const index = getActiveTab();
 	const target = event.target as HTMLElement | null;
 	const items = tabItems.value;
+	let	unWorkIndex = 0;
+	let	moveToIndex = 0;
 
-	if((index === 0)) return;
+	if(event.key === 'ArrowLeft') {
+		unWorkIndex = 0;
+		moveToIndex = -1;
+	} else if(event.key === 'ArrowRight') {
+		unWorkIndex = items.length - 1;
+		moveToIndex = 1;
+	}
 
-	if(!target) return;
+	if(index === unWorkIndex || !target) return;
 
 	for(const item of items) {
 		item.isSelected = false;
 	}
 
-	items[index - 1].isSelected = true;
+	items[index + moveToIndex].isSelected = true;
 
-	console.log(makeFocus(index - 1));
-}
-
-function keyRightFunc(event: KeyboardEvent) {
-	const index = getActiveTab();
-	const target = event.target as HTMLElement | null;
-	const items = tabItems.value;
-
-	if((index === items.length - 1)) return;
-
-	if(!target) return;
-
-	for(const item of items) {
-		item.isSelected = false;
-	}
-
-	items[index + 1].isSelected = true;
-
-	console.log(makeFocus(index + 1));
+	makeFocus(index + moveToIndex);
 }
 
 function getActiveTab() {
@@ -141,8 +131,7 @@ function makeFocus(index: number) {
 				:tabindex="getTabIndex(item.isSelected)"
 				:aria-selected="item.isSelected"
 				@click="clickFunc"
-				@keydown.arrow-left="keyLeftFunc"
-				@keydown.arrow-right="keyRightFunc">
+				@keydown="keydownFunc($event)">
 				{{ item.tab.text }}
 			</button>
 		</div>
