@@ -8,9 +8,14 @@ const partsList = [
 				title: 'タブ01',
 				path: '/tab/index.html',
 				description: 'バニラtsでの作成'
-			}
+			},
+			{
+				title: 'タブ-vue',
+				path: '/tab/vue/index.html',
+				description: 'vueでの作成'
+			},
 		]
-	}
+	},
 ]
 </script>
 
@@ -20,7 +25,7 @@ const partsList = [
 			<h2 class="title is-spaced">{{ item.heading }}</h2>
 			<p class="subtitle" v-if="item.description">{{ item.description }}</p>
 			<ul v-for="list in item.list">
-				<li class="box">
+				<li class="box mb-4">
 					<p class="title">
 						<a :href="list.path">{{ list.title }}</a>
 					</p>
